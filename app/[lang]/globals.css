@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+.header-wrapper{
+  background-image: url(/images/header.jpg);
+  height: 500px;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.nav-p{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 142px;
+}
+.nav-cont{
+  scrollbar-width: none;
+  padding-block: 50px;
+}
+main{
+  margin: 0 auto;
+}
+.cart-cont{
+  scrollbar-width: none;
+}
+.product-cont{
+  grid-template-columns: repeat(3,1fr);
+}

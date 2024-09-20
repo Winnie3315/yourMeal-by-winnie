@@ -1,0 +1,13 @@
+{
+	"header": {
+		"mainTitle": "Бургеры",
+		"openModal": "открыть"
+	},
+	"product": {
+		"price": "",
+		"titles": {
+			"ru": "Бургер выфвф",
+			"en": ""
+		} 
+	}
+}
