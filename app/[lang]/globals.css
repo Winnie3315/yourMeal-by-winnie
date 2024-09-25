@@ -53,3 +53,6 @@ main{
 .product-cont{
   grid-template-columns: repeat(3,1fr);
 }
+.admin-aside{
+  box-shadow: 10px 5px 5px rgb(200, 198, 198);
+}

@@ -13,7 +13,8 @@
     "negotiator": "^0.6.3",
     "next": "14.2.11",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hook-form": "^7.53.0"
   },
   "devDependencies": {
     "@types/negotiator": "^0.6.3",
@@ -22,6 +23,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.11",
+    "mongodb": "^6.9.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
