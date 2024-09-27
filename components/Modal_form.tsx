@@ -1,11 +1,26 @@
 "use client";
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import { useForm } from 'react-hook-form';
+import { Category } from '@/modules/category';
 
 const Modal_Form = ({ isOpen, onClose }) => {
   const { register, handleSubmit, reset } = useForm();
   const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch('http://localhost:3000/api/category');
+        const data = await res.json();
+        setCategories(data.data);
+      } catch (error) {
+        console.error('Ошибка при загрузке категорий:', error);
+      }
+    }
+    fetchCategories();
+  }, []);
 
   async function onSubmit(formData) {
     console.log(formData);
@@ -23,7 +38,6 @@ const Modal_Form = ({ isOpen, onClose }) => {
       const responseData = await res.json();
       console.log(responseData);
       onClose();
-      router.push('/');
     } catch (error) {
       console.error('Ошибка при отправке данных:', error);
     }
@@ -42,6 +56,16 @@ const Modal_Form = ({ isOpen, onClose }) => {
         </button>
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Добавить в меню</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <select
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            {...register('categoryId')}
+          >
+            {categories.map(category => (
+              <option key={category._id} value={category._id}>
+                {category.titles}
+              </option>
+            ))}
+          </select>
           <input
             type="text"
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"

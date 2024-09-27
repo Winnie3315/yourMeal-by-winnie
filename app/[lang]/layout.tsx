@@ -4,6 +4,8 @@ import "./globals.css";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import CartCard from "@/components/CartCard";
+import Cart from "@/components/Cart";
+import Nav from "@/components/Nav";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -26,12 +28,13 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    
     return (
         <html lang="en">
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                {/* <div className="wrapper">
+                <div className="wrapper">
                     <header className="w-full ">
                         <div className="header-wrapper flex items-center justify-around flex-col">
                             <div className="top">
@@ -63,52 +66,15 @@ export default function RootLayout({
 
                             </div>
                         </div>
-                        <div className="navigators w-full flex justify-center items-center">
-                            <nav className="nav-cont flex overflow-auto gap-[20px] w-[1200px]">
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                                <Navigation />
-                            </nav>
-                        </div>
+                        <Nav />
                     </header>
                     <main className="w-[1200px] flex">
-                        <div className="cart mt-[60px] w-[300px] p-[20px] border border-gray-200 rounded-xl mr-[30px] h-[447px]">
-                            <div className="top flex justify-between pb-[10px]">
-                                <h2 className="text-[24px]">Корзина</h2>
-                                <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-lg"><span>1</span>
-                                </div>
-                            </div>
-                            <div className="cart-cont flex overflow-auto h-[240px] flex-col">
-                                <CartCard />
-                                <CartCard />
-                                <CartCard />
-                                <CartCard />
-                                <CartCard />
-                                <CartCard />
-                            </div>
-                            <div className="result">
-                                <div className="top flex justify-between pb-[24px]">
-                                    <h3 className="text-[16px]">Итого</h3>
-                                    <h3 className="text-[16px] font-[400]"><span>1200</span></h3>
-                                </div>
-                                <button className="bg-[#FF7020] w-full h-[40px] text-white rounded-xl ">Оформить заказ</button>
-                            </div>
-                        </div>
+                        <Cart />
                         {children}
                     </main>
-                </div> */}
+                </div>
 
-                <div className="wrapper w-full">
+                {/* <div className="wrapper w-full">
                     <aside className="admin-aside w-400px max-w-[400px] h-[100vh] flex flex-col ">
                         <div className="top flex justify-center items-center mb-[40px]">
                             <img src="/images/logotype.svg" alt="logo" />
@@ -165,7 +131,7 @@ export default function RootLayout({
                     <div className="main">
                         {children}
                     </div>
-                </div>
+                </div> */}
 
             </body>
         </html>

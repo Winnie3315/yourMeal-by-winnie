@@ -1,67 +1,75 @@
-"use client"
+"use client";
 
-import Image from "next/image";
-import Navigation from "@/components/Navigation";
-import Product from "@/components/Product";
-import Modal from "@/components/hoc/Modal";
-import Modal_Form from "@/components/Modal_form";
 import { useEffect, useState } from "react";
 import { Menu } from "@/modules/menu";
+import { Category } from "@/modules/category";
+import Product from "@/components/Product";
+import { useSearchParams, useRouter } from "next/navigation"; 
 
 export default function Home() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isDataUpdated, setIsDataUpdated] = useState(false);
+  const [menuItems, setMenuItems] = useState<Menu[]>([]);
+  const [categoryItems, setCategoryItems] = useState<Category[]>([]);
+  const searchParams = useSearchParams();
+  const category_Id = searchParams.get("category_Id");
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
+  const fetchMenuItems = async (categoryId?: string) => {
+    try {
+      const url = categoryId
+        ? `http://localhost:3000/api/menu?category_Id=${categoryId}`
+        : "http://localhost:3000/api/menu";
 
-    const [menuItems, setMenuItems] = useState<Menu[]>([]);
+      console.log("Fetching menu items with URL:", url);
 
-    useEffect(() => {
-        const fetchMenuItems = async () => {
-            try {
-                const res = await fetch('http://localhost:3000/api/menu');
-                if (!res.ok) throw new Error("Ошибка при получении данных");
-    
-                const response = await res.json();
-                console.log("Response from API:", response);
-                setMenuItems(response.data);
-            } catch (error) {
-                console.error("Ошибка:", error);
-            }
-        };
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Ошибка при получении данных");
 
-        fetchMenuItems();
-    }, [isDataUpdated]);
+      const response = await res.json();
+      console.log("Filtered Menu Items:", response.data);
+      setMenuItems(response.data);
+    } catch (error) {
+      console.error("Ошибка:", error);
+    }
+  };
 
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
+  const fetchCategoryItems = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/category");
+      if (!res.ok) throw new Error("Ошибка при получении данных");
 
-    const handleDataUpdate = () => {
-        setIsDataUpdated(prev => !prev);
-        closeModal();
-    };
+      const response = await res.json();
+      setCategoryItems(response.data);
+    } catch (error) {
+      console.error("Ошибка:", error);
+    }
+  };
 
-    console.log(menuItems);
+  useEffect(() => {
+    fetchCategoryItems();
+    fetchMenuItems();
+  }, []);
 
-    return (
-        <div className="w-full">
-            <h1 className="text-[40px] font-[600]">Бургеры</h1>
-            <div className="product-cont grid gap-[30px]">
-                <Modal_Form isOpen={isModalOpen} onClose={handleDataUpdate}/>
-                {menuItems.map((item, index) => (
-                    <Product
-                        key={index}
-                        img={item.image}
-                        price={item.price}
-                        weight={item.weight}
-                        title={item.title}
-                    />
-                ))}
-                <button onClick={openModal}>add menu</button>
-            </div>
-        </div>
-    );
+  useEffect(() => {
+    if (category_Id) {
+      console.log("Category ID from query params:", category_Id);
+      fetchMenuItems(category_Id); 
+    }
+  }, [category_Id]);
+
+  return (
+    <div className="w-full">
+      <h1 className="text-[40px] font-[600]">Бургеры</h1>
+
+      <div className="product-cont grid gap-[30px]">
+        {menuItems.map((item, index) => (
+          <Product
+            key={index}
+            img={item.image}
+            price={item.price}
+            weight={item.weight}
+            title={item.title}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
