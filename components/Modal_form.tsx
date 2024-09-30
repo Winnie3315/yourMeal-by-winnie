@@ -51,7 +51,7 @@ const Modal_Form = ({ isOpen, onClose }) => {
     if (!imageUrl) {
       const uploadedImageUrl = await handleImageUpload();
       if (!uploadedImageUrl) {
-        return; // Stop submission if image upload fails
+        return;
       }
     }
 
