@@ -14,27 +14,51 @@
 //         return NextResponse.json({ success: false, message: e.message }, { status: 500 })
 //     }
 // }
-// export const PATCH = async (res: NextResponse, req: NextRequest) => {
+export const PATCH = async (req: NextRequest, { params }: {params : {id: string}}) => {
+    try {
+        const client = await clientPromise;
 
-// }
-// export const DELETE = async (res: NextResponse, req: NextRequest) => {
+        const db = client.db("mydatabase");
+        const body = await req.json()
 
-// }
+        const menuItems = await db.collection("menu").findOneAndUpdate({_id: new ObjectId(params.id)}, { $set: body})
+        return NextResponse.json({ success: true, data: menuItems });
+    } catch (e: any) {
+        return NextResponse.json({ success: false, message: e.message }, { status: 500 });
+    }
+}
+
+
+export const DELETE = async (req: NextRequest, { params }: {params : {id: string}}) => {
+    try {
+        const client = await clientPromise;
+
+        const db = client.db("mydatabase");
+
+        const menuItems = await db.collection("menu").findOneAndDelete({_id: new ObjectId(params.id)})
+        return NextResponse.json({ success: true, data: menuItems });
+    } catch (e: any) {
+        return NextResponse.json({ success: false, message: e.message }, { status: 500 });
+    }
+}
+
+
+
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (res:NextResponse, req: NextRequest) => {
+export const GET = async (res: NextResponse, req: NextRequest) => {
     try {
-      const client = await clientPromise;
-      const db = client.db("mydatabase");
-      const menuItems = await db.collection("menu").find({}).toArray()
-  
-      return NextResponse.json({ success: true, data: menuItems });
+        const client = await clientPromise;
+        const db = client.db("mydatabase");
+        const menuItems = await db.collection("menu").find({}).toArray()
+
+        return NextResponse.json({ success: true, data: menuItems });
     } catch (e: any) {
-      return NextResponse.json({ success: false, message: e.message }, { status: 500 });
+        return NextResponse.json({ success: false, message: e.message }, { status: 500 });
     }
-  };
+};
 
 // export const PATCH = async (req: NextRequest, { params }: { params: { id: string } }) => {
 //   try {

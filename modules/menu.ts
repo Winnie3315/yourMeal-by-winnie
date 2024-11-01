@@ -1,14 +1,16 @@
 type Translation = {
-    ru: string
-    en: string
-}
+    ru: string;
+    en: string;
+};
 
 export type Menu = {
-    _id: string
-    titles: Translation
-    description: Translation
-    price: number
-    weight: string
-    images: string[]
-    composition: string
-}
+    _id: string;
+    titles: Translation;
+    description: Translation;
+    price: number;
+    weight: string;
+    images: string[];
+    composition: string;
+    categoryId: string;
+    imageUrl: string;
+};

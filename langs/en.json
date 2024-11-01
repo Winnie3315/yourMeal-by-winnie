@@ -1,6 +1,16 @@
 {
 	"header": {
-		"mainTitle": "Burgers",
-		"openModal": "open"
+		"title": "Only the       ",
+		"orangeTitle": "juiciest burgers!",
+		"subtitle": "Free shipping from 599₽"
+	},
+	"footer": {
+		"callNumber": "Order number",
+		"socialNetworks": "we are on social networks"
+	},
+	"cart": {
+		"cart": "Cart",
+		"overal": "Overal",
+		"order": "Place an order"
 	}
 }

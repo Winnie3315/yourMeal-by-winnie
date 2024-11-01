@@ -1,17 +1,22 @@
-"use client";
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import Description from "../Description";
 
 interface ModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	title: string;
+	price: string;
+	weight: string;
+	img: string;
 	children: React.ReactNode;
+	description: string
 }
 
-const Modal: React.FC<ModalProps> = ({ children }) => {
-	const [isOpen, setIsOpen] = useState(false);
-
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, price, weight, img, children, description }) => {
+	
 	return (
 		<>
-			<div onClick={() => setIsOpen(true)}>{children}</div>
+			{children}
 
 			{isOpen && (
 				<div
@@ -22,8 +27,8 @@ const Modal: React.FC<ModalProps> = ({ children }) => {
 					}}
 				>
 					<div className="w-[500px] h-fit bg-white rounded-md p-4">
-						<button onClick={() => setIsOpen(false)}>x</button>
-						<Description />
+						<button onClick={onClose}>x</button>
+						<Description title={title} price={price} weight={weight} img={img} description={description} />
 					</div>
 				</div>
 			)}

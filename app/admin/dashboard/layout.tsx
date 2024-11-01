@@ -23,52 +23,59 @@ export default function AdminLayout({
 
                 <div className="wrapper w-full flex gap-5">
                     <aside className="admin-aside w-400px max-w-[400px] h-[100vh] flex flex-col ">
-                        <div className="top flex justify-center items-center mb-[40px]">
+                        <Link href="/admin/dashboard/" className="top flex justify-center items-center mb-[40px]">
                             <img src="/images/logotype.svg" alt="logo" />
-                        </div>
+                        </Link>
+
                         <div className="center">
-                        <Link href="/admin/dashboard/menu">
-                        <div  
-                            className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
-                            <img src="/images/menuIcon.svg" alt="menu" />
-                            <p>Menu</p>
-                        </div>
-                        </Link>
+                            <Link href="/admin/dashboard/">
+                                <div className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
+                                    <img src="/images/dashboardIcon.svg" alt="dashboard" />
+                                    <p>Dashboard</p>
+                                </div>
+                            </Link>
+                            <Link href="/admin/dashboard/menu">
+                                <div
+                                    className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
+                                    <img src="/images/menuIcon.svg" alt="menu" />
+                                    <p>Menu</p>
+                                </div>
+                            </Link>
 
-                        <Link href="/admin/dashboard/order">
-                        <div  
-                            className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
-                            <img src="/images/orderList.svg" alt="order" />
-                            <p>Order List</p>
-                        </div>
-                        </Link>
+                            <Link href="/admin/dashboard/order">
+                                <div
+                                    className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
+                                    <img src="/images/orderList.svg" alt="order" />
+                                    <p>Order List</p>
+                                </div>
+                            </Link>
 
-                        <Link href="/admin/dashboard/category">
-                        <div  
-                            className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
-                            <img src="/images/categories.svg" alt="categ" />
-                            <p>Categories</p>
-                        </div>
-                        </Link>
+                            <Link href="/admin/dashboard/category">
+                                <div
+                                    className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
+                                    <img src="/images/categories.svg" alt="categ" />
+                                    <p>Categories</p>
+                                </div>
+                            </Link>
 
-                        <div  
-                            className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
-                            <img src="/images/customer.svg" alt="customer" />
-                            <p>Customer Details</p>
-                        </div>
-                        <div  
-                            className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
-                            <img src="/images/analytics.svg" alt="Analytics" />
-                            <p>Analytics</p>
-                        </div>
+                            <div
+                                className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
+                                <img src="/images/customer.svg" alt="customer" />
+                                <p>Customer Details</p>
+                            </div>
+                            <div
+                                className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
+                                <img src="/images/analytics.svg" alt="Analytics" />
+                                <p>Analytics</p>
+                            </div>
                         </div>
                         <div className="bottom mt-[220px]">
-                            <div  
+                            <div
                                 className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
                                 <img src="/images/menuIcon.svg" alt="menu" />
                                 <p>Name Surname</p>
                             </div>
-                            <div  
+                            <div
                                 className="pt-[13px] pr-[78px] pb-[13px] pl-[16px] flex items-center gap-3">
                                 <img src="/images/setting-2.svg" alt="menu" />
                                 <p>Settings</p>

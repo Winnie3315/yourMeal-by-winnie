@@ -1,239 +1,207 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
 
-const Modal_Form = ({ isOpen, onClose }) => {
+import { useState, useEffect } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+
+interface FormData {
+  titleRu: string;
+  titleEn: string;
+  price: number;
+  descriptionRu: string;
+  descriptionEn: string;
+  categoryId: string;
+  weight: number;
+  imageUrl?: string;
+}
+
+export default function Modal_Form({
+  closeModal,
+  isOpen,
+}: {
+  closeModal: () => void;
+  isOpen: boolean;
+}) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>();
   const [file, setFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
-  const { register, handleSubmit, reset } = useForm();
-  const router = useRouter();
+  const [image, setImage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>('');
+  const [categories, setCategories] = useState<any[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
+    if (event.target.files && event.target.files[0]) {
       setFile(event.target.files[0]);
+      setImage(URL.createObjectURL(event.target.files[0]));
     }
   };
 
-  const handleImageUpload = async () => {
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/category');
+      if (!response.ok) {
+        throw new Error('Не удалось загрузить категории');
+      }
+      const data = await response.json();
+      setCategories(data.data);
+    } catch (error) {
+      setMessage('Ошибка при загрузке категорий');
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (!file) {
-      setMessage("Please select a file.");
-      return null;
+      setMessage('Пожалуйста, выберите изображение.');
+      return;
     }
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append('image', file);
 
     try {
-      const response = await fetch("/api/menu/upload", {
-        method: "POST",
+      const uploadResponse = await fetch('/api/menu/upload', {
+        method: 'POST',
         body: formData,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(errorData.message || "Image upload failed");
-        return null;
-      }
-
-      const data = await response.json();
-      setMessage("Image uploaded successfully");
-      setImageUrl(data.imageUrl);
-      return data.imageUrl;
-    } catch (error) {
-      setMessage("Something went wrong: " + error);
-      return null;
-    }
-  };
-
-  const onSubmit = async (formData) => {
-    if (!imageUrl) {
-      const uploadedImageUrl = await handleImageUpload();
-      if (!uploadedImageUrl) {
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        setMessage(errorData.message || 'Ошибка загрузки изображения');
         return;
       }
-    }
 
-    const completeData = {
-      ...formData,
-      image: imageUrl,
-    };
+      const imageData = await uploadResponse.json();
 
-    try {
-      const res = await fetch('http://localhost:3000/api/menu', {
-        method: "POST",
-        body: JSON.stringify(completeData),
+      const menuData = {
+        price: data.price,
+        description: [
+          { ru: data.descriptionRu },
+          { en: data.descriptionEn }
+        ],
+        imageUrl: imageData.data,
+        titles: [
+          { ru: data.titleRu },
+          { en: data.titleEn }
+        ],
+        weight: data.weight,
+        categoryId: data.categoryId
+      };
+
+      const postResponse = await fetch('/api/menu', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(menuData),
       });
 
-      if (!res.ok) {
-        const responseData = await res.json();
-        setMessage(responseData.message || "Data submission failed");
-        return;
+      if (!postResponse.ok) {
+        throw new Error('Ошибка при создании элемента меню');
       }
 
-      const responseData = await res.json();
-      setMessage("Data submitted successfully");
-      console.log(responseData);
-      onClose();
       reset();
+      setFile(null);
+      setImage(null);
+      setMessage('');
+      closeModal();
     } catch (error) {
-      setMessage('Ошибка при отправке данных: ' + error);
+      setMessage('Что-то пошло не так: ' + error);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-11/12 sm:w-1/2 md:w-1/3 p-6 relative">
-        <button
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-          onClick={onClose}
-        >
-          &times;
-        </button>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Добавить в меню</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white text-black p-8 rounded-lg w-96 shadow-2xl relative">
+        <h2 className="text-xl font-bold mb-4">Добавить элемент</h2>
+        <form className='z-20' onSubmit={handleSubmit(onSubmit)}>
+          <input
+            {...register('titleRu', { required: 'Название на русском обязательно' })}
+            type="text"
+            placeholder="Название на русском"
+            className={`w-full mb-4 p-2 border rounded ${errors.titleRu ? 'border-red-500' : ''}`}
+          />
+          {errors.titleRu && <p className="text-red-500">{errors.titleRu.message}</p>}
+
+          <input
+            {...register('titleEn', { required: 'Название на английском обязательно' })}
+            type="text"
+            placeholder="Название на английском"
+            className={`w-full mb-4 p-2 border rounded ${errors.titleEn ? 'border-red-500' : ''}`}
+          />
+          {errors.titleEn && <p className="text-red-500">{errors.titleEn.message}</p>}
+
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full mb-4 p-2 border rounded"
           />
+          {image && <img src={image} className="w-[200px] h-[200px] mb-4" alt="preview" />}
+          {message && <p className="text-red-500">{message}</p>}
+
           <input
-            type="text"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Название"
-            {...register('title')}
-          />
-          <input
+            {...register('price', { required: 'Цена обязательна' })}
             type="number"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Вес"
-            {...register('weight')}
-          />
-          <input
-            type="text"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             placeholder="Цена"
-            {...register('price')}
+            className={`w-full mb-4 p-2 border rounded ${errors.price ? 'border-red-500' : ''}`}
           />
+          {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+
           <textarea
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Состав"
-            {...register('composition')}
-          ></textarea>
+            {...register('descriptionRu', { required: 'Описание на русском обязательно' })}
+            placeholder="Описание на русском"
+            className={`w-full mb-4 p-2 border rounded ${errors.descriptionRu ? 'border-red-500' : ''}`}
+          />
+          {errors.descriptionRu && <p className="text-red-500">{errors.descriptionRu.message}</p>}
+
           <textarea
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            placeholder="Описание"
-            {...register('description')}
-          ></textarea>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            {...register('descriptionEn', { required: 'Описание на английском обязательно' })}
+            placeholder="Описание на английском"
+            className={`w-full mb-4 p-2 border rounded ${errors.descriptionEn ? 'border-red-500' : ''}`}
+          />
+          {errors.descriptionEn && <p className="text-red-500">{errors.descriptionEn.message}</p>}
+
+          <select
+            {...register('categoryId', { required: 'Категория обязательна' })}
+            className={`w-full mb-4 p-2 border rounded ${errors.categoryId ? 'border-red-500' : ''}`}
           >
-            Добавить
+            <option value="">Выберите категорию</option>
+            {categories.map((category) => {
+              const titleRu = category.titles.find((title: { ru: string }) => title.ru)?.ru;
+              return (
+                <option key={category._id} value={category._id}>
+                  {titleRu || 'Название на русском не найдено'}
+                </option>
+              );
+            })}
+          </select>
+          {errors.categoryId && <p className="text-red-500">{errors.categoryId.message}</p>}
+
+          <input
+            {...register('weight', { required: 'Вес обязателен' })}
+            type="number"
+            placeholder="Вес"
+            className={`w-full mb-4 p-2 border rounded ${errors.weight ? 'border-red-500' : ''}`}
+          />
+          {errors.weight && <p className="text-red-500">{errors.weight.message}</p>}
+
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full">
+            Добавить элемент
           </button>
         </form>
-        {message && <p className="mt-4 text-red-500">{message}</p>}
+        <button onClick={closeModal} className="absolute top-2 right-5 text-gray-600 hover:text-gray-800">
+          x
+        </button>
       </div>
     </div>
   );
-};
-
-export default Modal_Form;
-
-// "use client";
-// import { useRouter } from 'next/navigation';
-// import React from 'react';
-// import { useForm } from 'react-hook-form';
-
-// const Modal_Form = ({ isOpen, onClose }) => {
-//   const { register, handleSubmit, reset } = useForm();
-//   const router = useRouter();
-
-//   async function onSubmit(formData) {
-//     console.log(formData);
-//     reset();
-
-//     try {
-//       const res = await fetch('http://localhost:3000/api/menu', {
-//         method: "POST",
-//         body: JSON.stringify(formData),
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       const responseData = await res.json();
-//       console.log(responseData);
-//       onClose();
-//     } catch (error) {
-//       console.error('Ошибка при отправке данных:', error);
-//     }
-//   }
-
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-//       <div className="bg-white rounded-lg shadow-lg w-11/12 sm:w-1/2 md:w-1/3 p-6 relative">
-//         <button
-//           className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-//           onClick={onClose}
-//         >
-//           &times;
-//         </button>
-//         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Добавить в меню</h2>
-//         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-//           <input
-//             type="text"
-//             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//             placeholder="Изображение"
-//             {...register('image')}
-//           />
-//           <input
-//             type="text"
-//             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//             placeholder="Название"
-//             {...register('title')}
-//           />
-//           <input
-//             type="number"
-//             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//             placeholder="Вес"
-//             {...register('weight')}
-//           />
-//           <input
-//             type="text"
-//             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//             placeholder="Цена"
-//             {...register('price')}
-//           />
-//           <textarea
-//             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//             placeholder="Состав"
-//             {...register('composition')}
-//           ></textarea>
-//           <textarea
-//             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//             placeholder="Описание"
-//             {...register('description')}
-//           ></textarea>
-//           <button
-//             type="submit"
-//             className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-//           >
-//             Добавить
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Modal_Form;
+}

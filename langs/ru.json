@@ -1,13 +1,16 @@
 {
 	"header": {
-		"mainTitle": "Бургеры",
-		"openModal": "открыть"
+		"title": "Только самые ",
+		"orangeTitle": "сочные бургеры!",
+		"subtitle": "Бесплатная доставка от 599₽"
 	},
-	"product": {
-		"price": "",
-		"titles": {
-			"ru": "Бургер выфвф",
-			"en": ""
-		} 
+	"footer": {
+		"callNumber": "Номер для заказа",
+		"socialNetworks": "Мы в соцсетях"
+	},
+	"cart": {
+		"cart": "Корзина",
+		"overal": "Итого",
+		"order": "Оформить заказ"
 	}
 }

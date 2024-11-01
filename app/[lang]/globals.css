@@ -56,3 +56,31 @@ main{
 .admin-aside{
   box-shadow: 10px 5px 5px rgb(200, 198, 198);
 }
+footer{
+  margin: 100px auto 0 auto;
+  box-shadow: 0 -5px 0px rgb(251, 251, 251);
+}
+
+@media (max-width:1200px){
+  .product-cont{
+    grid-template-columns: repeat(2,1fr);
+  }
+  main{
+    width: 900px ;
+  }
+  .product{
+    min-width: unset;
+    max-width: none;
+  }
+  .nav-cont{
+    width: 900px ;
+  }
+  footer{
+    width: 900px ;
+  }
+}
+@media (max-width:992px){
+  .product-cont{
+    grid-template-columns: repeat(4,1fr);
+  }
+}
