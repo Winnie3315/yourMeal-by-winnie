@@ -6,6 +6,13 @@ import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
 import { getDictionary } from "./dictionaries";
 import { useRouter } from "next/router";
+import {
+    ClerkProvider,
+    SignInButton,
+    SignedIn,
+    SignedOut,
+    UserButton
+} from '@clerk/nextjs'
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -34,24 +41,26 @@ export default async function RootLayout({
     children: React.ReactNode;
     params: { lang: string };
 }) {
-    const { lang } = params; 
-    const translate = await getDictionary(lang); 
+    const { lang } = params;
+    const translate = await getDictionary(lang);
 
-    
-    
+
+
 
     return (
-        <html lang={lang}>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <div className="wrapper">
-                    <Header translate={translate} lang={lang}/>
-                    <main className="w-[1200px] max-1200:w-[900px] max-992:w-[700px] flex">
-                        <Cart translate={translate}/>
-                        {children}
-                    </main>
-                    <Footer translate={translate} />
-                </div>
-            </body>
-        </html>
+        <ClerkProvider>
+            <html lang={lang}>
+                <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                    <div className="wrapper">
+                        <Header translate={translate} lang={lang} />
+                        <main className="w-[1200px] max-1200:w-[900px] max-992:w-[700px] flex">
+                            <Cart translate={translate} />
+                            {children}
+                        </main>
+                        <Footer translate={translate} />
+                    </div>
+                </body>
+            </html>
+        </ClerkProvider>
     );
 }

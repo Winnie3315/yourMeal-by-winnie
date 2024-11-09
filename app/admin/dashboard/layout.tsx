@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import CartCard from "@/components/CartCard";
+import { Protect } from "@clerk/nextjs";
 
 
 export const metadata: Metadata = {
@@ -83,7 +84,7 @@ export default function AdminLayout({
                         </div>
                     </aside>
                     <div className="main w-full ">
-                        {children}
+                        <Protect>{children}</Protect>
                     </div>
                 </div>
 
